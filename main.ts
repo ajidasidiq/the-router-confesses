@@ -30,6 +30,18 @@ function main(): void {
   if (!ENTRY.trim()) {
     throw new Error("entry is only whitespace");
   }
+  // Single line, no control characters, finished sentence.
+  if (ENTRY.includes("\n") || ENTRY.includes("\r")) {
+    throw new Error("entry must be a single line");
+  }
+  for (const ch of ENTRY) {
+    if (ch.charCodeAt(0) < 0x20 || ch.charCodeAt(0) === 0x7f) {
+      throw new Error("entry must not contain control characters");
+    }
+  }
+  if (!/[.!?]$/.test(ENTRY)) {
+    throw new Error("entry must end with terminal punctuation");
+  }
   mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
   writeFileSync(OUTPUT_PATH, ENTRY, "utf-8");
 }
